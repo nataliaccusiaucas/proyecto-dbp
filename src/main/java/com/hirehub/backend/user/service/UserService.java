@@ -30,12 +30,15 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = new User(
-                request.name(),
-                request.email(),
-                request.phone(),
-                request.role() != null ? request.role() : Role.CLIENT,
-                encodedPassword
-        );
+            request.name(),
+            request.email(),
+            request.phone(),
+            request.role() != null
+            ? Role.valueOf(request.role().toUpperCase())
+            : Role.CLIENT,
+            encodedPassword
+);
+
 
         User saved = userRepository.save(user);
         return mapToResponse(saved);

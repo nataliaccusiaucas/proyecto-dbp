@@ -1,6 +1,12 @@
 package com.hirehub.backend.user.dto;
 
-public record AuthResponseDTO(
-    String token,
-    String message
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class AuthResponseDTO {
+    private String message;
+}

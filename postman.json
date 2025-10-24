@@ -1,0 +1,58 @@
+{
+  "info": {
+    "name": "HireHub – Auth & Users",
+    "_postman_id": "b2e2f8c0-9049-4b60-9b2c-9f43b3e555aa",
+    "description": "Colección de endpoints de autenticación y usuarios de HireHub",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Registro de usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Kevin UX\",\n  \"email\": \"kevin@hirehub.com\",\n  \"phone\": \"999999999\",\n  \"password\": \"123456\",\n  \"role\": \"FREELANCER\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"] }
+      }
+    },
+    {
+      "name": "2️⃣ Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"kevin@hirehub.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"] }
+      }
+    },
+    {
+      "name": "3️⃣ Obtener todos los usuarios",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer <Pega_tu_token_aquí>" }
+        ],
+        "url": { "raw": "http://localhost:8080/api/users", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "users"] }
+      }
+    },
+    {
+      "name": "4️⃣ Obtener usuario por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer <Pega_tu_token_aquí>" }
+        ],
+        "url": { "raw": "http://localhost:8080/api/users/{id}", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "users", "{id}"] }
+      }
+    }
+  ]
+}
