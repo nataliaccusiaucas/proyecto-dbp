@@ -1,6 +1,6 @@
 package com.hirehub.backend.user.controller;
 
-import com.hirehub.backend.user.dto.UserRequestDTO;
+import com.hirehub.backend.user.dto.RegisterRequestDTO;
 import com.hirehub.backend.user.dto.UserResponseDTO;
 import com.hirehub.backend.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody RegisterRequestDTO user) {
         return ResponseEntity.ok(userService.createUser(user));
     }
 

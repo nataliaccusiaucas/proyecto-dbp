@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private String password; // 🔒 agregado para login con seguridad
+    private String password; 
 
     @Column(name = "completed_jobs")
     private Integer completedJobs = 0;
@@ -49,14 +49,12 @@ public class User implements UserDetails {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.role = role;
-        this.password = password;
+        this.role = role != null ? role : Role.CLIENT;
         this.createdAt = LocalDateTime.now();
         this.averageRating = 0.0;
         this.completedJobs = 0;
+        this.password = password;
     }
-
-    // ====== Getters y setters ======
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -92,7 +90,6 @@ public class User implements UserDetails {
 
     public void setPassword(String password) { this.password = password; }
 
-    // ====== Métodos de UserDetails ======
 
     @Override
     public String getPassword() {
@@ -101,12 +98,12 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // 📧 usamos el email como username
+        return email; 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // puedes añadir roles si lo deseas
+        return Collections.emptyList();
     }
 
     @Override
