@@ -44,10 +44,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return new AuthResponseDTO(
-                "Usuario registrado correctamente: " + user.getEmail(),
-                null 
-        );
+        return new AuthResponseDTO("Usuario registrado correctamente: " + user.getEmail(), null);
     }
 
     public AuthResponseDTO login(AuthRequestDTO request) {
