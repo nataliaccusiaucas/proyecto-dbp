@@ -27,10 +27,12 @@ services:
       - hirehub-net
 
   app:
-    build: .
+    image: maven:3.9.9-eclipse-temurin-21
     container_name: hirehub-app
     restart: always
     working_dir: /app
+    volumes:
+      - ./:/app
     env_file:
       - .env
     environment:
