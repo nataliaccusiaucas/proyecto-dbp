@@ -26,7 +26,6 @@ class FreelancerProfileRepositoryTest {
     @Test
     @DisplayName("Should find profile when user exists")
     void shouldFindProfileWhenUserExists() {
-        // Arrange
         User user = new User("Free", "free@example.com", null, Role.FREELANCER, "pass");
         user = userRepository.save(user);
         
@@ -39,10 +38,8 @@ class FreelancerProfileRepositoryTest {
         profile.setPortfolioUrl("https://portfolio.example.com");
         profile = freelancerProfileRepository.save(profile);
 
-        // Act
         Optional<FreelancerProfile> result = freelancerProfileRepository.findByUser(user);
 
-        // Assert
         assertTrue(result.isPresent(), "Profile should be found");
         FreelancerProfile foundProfile = result.get();
         assertEquals(profile.getId(), foundProfile.getId(), "Profile ID should match");
@@ -57,21 +54,17 @@ class FreelancerProfileRepositoryTest {
     @Test
     @DisplayName("Should return empty when user has no profile")
     void shouldReturnEmptyWhenUserHasNoProfile() {
-        // Arrange
         User user = new User("Free", "free@example.com", null, Role.FREELANCER, "pass");
         user = userRepository.save(user);
 
-        // Act
         Optional<FreelancerProfile> result = freelancerProfileRepository.findByUser(user);
 
-        // Assert
         assertFalse(result.isPresent(), "No profile should be found");
     }
 
     @Test
     @DisplayName("Should save profile with all fields")
     void shouldSaveProfileWithAllFields() {
-        // Arrange
         User user = new User("Free", "free@example.com", null, Role.FREELANCER, "pass");
         user = userRepository.save(user);
         
@@ -83,10 +76,8 @@ class FreelancerProfileRepositoryTest {
         profile.setLocation("Remote");
         profile.setPortfolioUrl("https://portfolio.example.com");
 
-        // Act
         FreelancerProfile savedProfile = freelancerProfileRepository.save(profile);
 
-        // Assert
         assertNotNull(savedProfile.getId(), "Profile should have an ID after saving");
         assertEquals(profile.getTitle(), savedProfile.getTitle(), "Title should match");
         assertEquals(profile.getDescription(), savedProfile.getDescription(), "Description should match");

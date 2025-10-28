@@ -35,7 +35,7 @@ public class NotificationRepositoryTest extends BaseIntegrationTest {
 
     List<Notification> result = repository.findByRecipient(user);
         assertEquals(1, result.size());
-        assertEquals(notification.getId(), result.get(0).getId());
+        assertEquals(notification.getId(), result.getFirst().getId());
     }
 
     @Test
@@ -51,6 +51,6 @@ public class NotificationRepositoryTest extends BaseIntegrationTest {
 
     List<Notification> unread = repository.findByRecipient(user).stream().filter(n -> !n.isRead()).toList();
         assertEquals(1, unread.size());
-        assertFalse(unread.get(0).isRead());
+        assertFalse(unread.getFirst().isRead());
     }
 }
