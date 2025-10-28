@@ -21,11 +21,6 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://hirehub-db.cpwycmm84isf.us-east-2.rds.amazonaws.com:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=tu_contraseña_de_AWS
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_SHOW_SQL=true
       - JWT_SECRET=${JWT_SECRET}
     ports:
       - "8080:8080"
