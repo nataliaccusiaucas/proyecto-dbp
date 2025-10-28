@@ -1,58 +1,577 @@
 {
   "info": {
-    "name": "HireHub – Auth & Users",
-    "_postman_id": "b2e2f8c0-9049-4b60-9b2c-9f43b3e555aa",
-    "description": "Colección de endpoints de autenticación y usuarios de HireHub",
+    "name": "HireHub API Collection",
+    "description": "Colección completa para probar la API de HireHub. Incluye autenticación JWT, CRUD para entidades y manejo de errores.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "offer_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "review_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "1️⃣ Registro de usuario",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Kevin UX\",\n  \"email\": \"kevin@hirehub.com\",\n  \"phone\": \"999999999\",\n  \"password\": \"123456\",\n  \"role\": \"FREELANCER\"\n}"
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Client\",\n  \"email\": \"client@test.com\",\n  \"password\": \"password123\",\n  \"role\": \"CLIENT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has user data\", function () { pm.expect(pm.response.json()).to.have.property('id'); });",
+                  "pm.environment.set(\"user_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
         },
-        "url": { "raw": "http://localhost:8080/api/auth/register", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "register"] }
-      }
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has token\", function () { pm.expect(pm.response.json()).to.have.property('token'); });",
+                  "pm.environment.set(\"token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     },
     {
-      "name": "2️⃣ Login",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"kevin@hirehub.com\",\n  \"password\": \"123456\"\n}"
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         },
-        "url": { "raw": "http://localhost:8080/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "auth", "login"] }
-      }
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Client\",\n  \"email\": \"client@test.com\",\n  \"role\": \"CLIENT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            }
+          }
+        }
+      ]
     },
     {
-      "name": "3️⃣ Obtener todos los usuarios",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer <Pega_tu_token_aquí>" }
-        ],
-        "url": { "raw": "http://localhost:8080/api/users", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "users"] }
-      }
+      "name": "Job Requests",
+      "item": [
+        {
+          "name": "Create Job Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Web Development Job\",\n  \"description\": \"Need a website\",\n  \"budget\": 500.0,\n  \"status\": \"OPEN\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/job-requests",
+              "host": ["{{base_url}}"],
+              "path": ["job-requests"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"job_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Job Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/job-requests",
+              "host": ["{{base_url}}"],
+              "path": ["job-requests"]
+            }
+          }
+        },
+        {
+          "name": "Get Job Request by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/job-requests/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["job-requests", "{{job_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Job Request",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Job\",\n  \"description\": \"Updated desc\",\n  \"budget\": 600.0,\n  \"status\": \"CLOSED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/job-requests/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["job-requests", "{{job_id}}"]
+            }
+          }
+        }
+      ]
     },
     {
-      "name": "4️⃣ Obtener usuario por ID",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer <Pega_tu_token_aquí>" }
-        ],
-        "url": { "raw": "http://localhost:8080/api/users/{id}", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "users", "{id}"] }
-      }
+      "name": "Offers",
+      "item": [
+        {
+          "name": "Create Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobRequestId\": \"{{job_id}}\",\n  \"proposedPrice\": 450.0,\n  \"description\": \"I can do it\",\n  \"estimatedDays\": 7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/offers",
+              "host": ["{{base_url}}"],
+              "path": ["offers"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"offer_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Offers by Job",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/offers/job/{{job_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["offers", "job", "{{job_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Offer Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "\"ACCEPTED\""
+            },
+            "url": {
+              "raw": "{{base_url}}/offers/{{offer_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["offers", "{{offer_id}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"offerId\": \"{{offer_id}}\",\n  \"rating\": 5,\n  \"comment\": \"Great work!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["reviews"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.environment.set(\"review_id\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Reviews by Offer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reviews/offer/{{offer_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "offer", "{{offer_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications by User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commissions",
+      "item": [
+        {
+          "name": "Get Commissions by Freelancer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/commissions/freelancer/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["commissions", "freelancer", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Commission Invoices",
+      "item": [
+        {
+          "name": "Get Invoices by Freelancer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invoices/freelancer/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["invoices", "freelancer", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Freelancer Profiles",
+      "item": [
+        {
+          "name": "Create Freelancer Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bio\": \"Experienced developer\",\n  \"skills\": \"Java, Spring\",\n  \"hourlyRate\": 50.0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/freelancer-profiles",
+              "host": ["{{base_url}}"],
+              "path": ["freelancer-profiles"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile by User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/freelancer-profiles/user/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["freelancer-profiles", "user", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Tests",
+      "item": [
+        {
+          "name": "Test 401 Unauthorized (sin token)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test 404 Not Found (ID inválido)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/00000000-0000-0000-0000-000000000000",
+              "host": ["{{base_url}}"],
+              "path": ["users", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
