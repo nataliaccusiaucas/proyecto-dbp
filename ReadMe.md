@@ -1,5 +1,6 @@
 ## PROYECTO HIREHUB
 CURSO: CS 2031 Desarrollo Basado en Plataformas
+
 Alumna: Natalia Ccusi Aucasime
 
 ## 1\. Introducción: HireHub – La Solución para el Mercado Freelance Competitivo
