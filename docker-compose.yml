@@ -1,17 +1,4 @@
 services:
-  db:
-    image: postgres:15
-    container_name: hirehub-db
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - hirehub-net
-
   pgadmin:
     image: dpage/pgadmin4
     container_name: hirehub-pgadmin
@@ -36,15 +23,14 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/hirehub
-      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://hirehub-db.cpwycmm84isf.us-east-2.rds.amazonaws.com:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=tu_contraseña_de_AWS
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
       - JWT_SECRET=${JWT_SECRET}
     ports:
       - "8080:8080"
-    depends_on:
-      - db
     networks:
       - hirehub-net
     command: >
