@@ -27,13 +27,18 @@ services:
       - hirehub-net
 
   app:
-    image: maven:3.9.9-eclipse-temurin-21
+    build: .
     container_name: hirehub-app
+    restart: always
     working_dir: /app
-    volumes:
-      - ./:/app
     env_file:
       - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/hirehub
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JWT_SECRET=${JWT_SECRET}
     ports:
       - "8080:8080"
     depends_on:
