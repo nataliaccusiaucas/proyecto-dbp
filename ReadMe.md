@@ -1,3 +1,7 @@
+## PROYECTO HIREHUB
+CURSO: CS 2031 Desarrollo Basado en Plataformas
+Alumna: Natalia Ccusi Aucasime
+
 ## 1\. Introducción: HireHub – La Solución para el Mercado Freelance Competitivo
 
 El **mercado laboral digital** presenta una **alta saturación** y competencia, haciendo que la búsqueda de proyectos estables sea un desafío para muchos profesionales freelance. Plataformas tradicionales suelen favorecer a freelancers con mayor historial, creando una desigualdad en el acceso a oportunidades.
