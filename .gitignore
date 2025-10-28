@@ -2,6 +2,8 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+#archivos sensibles
+.env
 
 ### STS ###
 .apt_generated
