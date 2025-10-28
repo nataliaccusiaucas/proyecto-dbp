@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/offers")
 public class OfferController {
 
+
     private final OfferService offerService;
 
     public OfferController(OfferService offerService) {
         this.offerService = offerService;
     }
 
-    // Crear una nueva oferta
     @PostMapping
     public OfferResponseDTO createOffer(@Valid @RequestBody OfferRequestDTO dto) {
         Offer offer = offerService.createOffer(
@@ -45,7 +45,6 @@ public class OfferController {
         );
     }
 
-    // Obtener ofertas por ID de JobRequest
     @GetMapping("/job-request/{jobRequestId}")
     public List<OfferResponseDTO> getOffersByJobRequest(@PathVariable UUID jobRequestId) {
         return offerService.getOffersByJobRequest(jobRequestId)
@@ -64,7 +63,6 @@ public class OfferController {
                 .collect(Collectors.toList());
     }
 
-    // Obtener ofertas por ID del freelancer
     @GetMapping("/freelancer/{freelancerId}")
     public List<OfferResponseDTO> getOffersByFreelancer(@PathVariable UUID freelancerId) {
         return offerService.getOffersByFreelancer(freelancerId)
@@ -83,7 +81,6 @@ public class OfferController {
                 .collect(Collectors.toList());
     }
 
-    // Actualizar estado de una oferta (PENDING → ACCEPTED / REJECTED)
     @PatchMapping("/{offerId}/status")
     public OfferResponseDTO updateOfferStatus(@PathVariable UUID offerId, @RequestParam OfferStatus status) {
         Offer updated = offerService.updateOfferStatus(offerId, status);
@@ -100,7 +97,6 @@ public class OfferController {
                 updated.getCreatedAt()
         );
     }
-    // Obtener todas las ofertas 
     @GetMapping
     public List<OfferResponseDTO> getAllOffers() {
         return offerService.getAllOffers()

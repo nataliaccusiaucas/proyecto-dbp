@@ -12,12 +12,9 @@ import java.util.UUID;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
-    // Reseñas hacia un freelancer
     List<Review> findByTarget(User target);
 
-    //  Reseñas hechas por un cliente
     List<Review> findByAuthor(User author);
 
-    // Reseñas asociadas a un trabajo específico
     List<Review> findByJobRequest(JobRequest jobRequest);
 }

@@ -23,7 +23,6 @@ public class ReviewService {
         this.jobRequestRepository = jobRequestRepository;
     }
 
-    // Crear una nueva reseña y actualizar promedio
     public Review createReview(ReviewRequestDTO dto) {
         var author = userRepository.findById(dto.authorId())
                 .orElseThrow(() -> new IllegalArgumentException("Autor no encontrado"));
@@ -32,32 +31,27 @@ public class ReviewService {
         var jobRequest = jobRequestRepository.findById(dto.jobRequestId())
                 .orElseThrow(() -> new IllegalArgumentException("Trabajo no encontrado"));
 
-        // Crear y guardar reseña
         Review review = new Review(author, target, jobRequest, dto.rating(), dto.comment());
         reviewRepository.save(review);
 
-        // Recalcular promedio del freelancer
         var reviews = reviewRepository.findByTarget(target);
         double newAverage = reviews.stream()
                 .mapToInt(Review::getRating)
                 .average()
                 .orElse(0.0);
 
-        // Actualizar campo en User
         target.setAverageRating(newAverage);
         userRepository.save(target);
 
         return review;
     }
 
-    // Obtener todas las reseñas de un freelancer
     public List<Review> getReviewsForFreelancer(UUID freelancerId) {
         var freelancer = userRepository.findById(freelancerId)
                 .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
         return reviewRepository.findByTarget(freelancer);
     }
 
-    //  Calcular promedio de reseñas de un freelancer
     public double calculateAverageRating(UUID freelancerId) {
         var freelancer = userRepository.findById(freelancerId)
                 .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
