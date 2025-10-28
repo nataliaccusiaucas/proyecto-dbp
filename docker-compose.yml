@@ -8,8 +8,6 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
       - "8081:80"
-    depends_on:
-      - db
     networks:
       - hirehub-net
 
