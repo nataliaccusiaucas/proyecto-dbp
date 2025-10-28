@@ -43,6 +43,12 @@ protected void doFilterInternal(
     }
 
     jwt = authHeader.substring(7);
+
+    if (jwt.isBlank() || jwt.equalsIgnoreCase("null")) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
     userEmail = jwtService.extractUsername(jwt);
 
     if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

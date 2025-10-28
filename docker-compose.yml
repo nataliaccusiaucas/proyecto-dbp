@@ -30,7 +30,6 @@ services:
     image: maven:3.9.9-eclipse-temurin-21
     container_name: hirehub-app
     working_dir: /app
-    command: sh -c "mvn -q -DskipTests package && java -jar target/*.jar"
     volumes:
       - ./:/app
     env_file:
@@ -41,6 +40,8 @@ services:
       - db
     networks:
       - hirehub-net
+    command: >
+      sh -c "mvn -q -DskipTests package && java -jar target/*.jar"
 
 volumes:
   postgres_data:

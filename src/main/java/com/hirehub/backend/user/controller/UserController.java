@@ -1,11 +1,10 @@
 package com.hirehub.backend.user.controller;
 
-import com.hirehub.backend.user.dto.RegisterRequestDTO;
 import com.hirehub.backend.user.dto.UserResponseDTO;
 import com.hirehub.backend.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 
 import java.util.List;
@@ -22,20 +21,14 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FREELANCER', 'CLIENT')")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
-
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody RegisterRequestDTO user) {
-        return ResponseEntity.ok(userService.createUser(user));
-    }
-
- 
-
 }

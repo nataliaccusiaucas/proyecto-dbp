@@ -44,7 +44,9 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return new AuthResponseDTO("Usuario registrado correctamente: " + user.getEmail(), null);
+        String token = jwtService.generateToken(user);
+
+        return new AuthResponseDTO("Usuario registrado correctamente: " + user.getEmail(), token);
     }
 
     public AuthResponseDTO login(AuthRequestDTO request) {
