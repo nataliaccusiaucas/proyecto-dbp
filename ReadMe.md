@@ -1,6 +1,7 @@
-Hola. He condensado el contenido solicitado, que originalmente era un texto extenso, en un resumen detallado que cumple con el límite de **2000 palabras** y conserva toda la información esencial sobre el proyecto **HireHub**.
+## PROYECTO HIREHUB
+CURSO: CS 2031 Desarrollo Basado en Plataformas
 
------
+Alumna: Natalia Ccusi Aucasime
 
 ## 1\. Introducción: HireHub – La Solución para el Mercado Freelance Competitivo
 
