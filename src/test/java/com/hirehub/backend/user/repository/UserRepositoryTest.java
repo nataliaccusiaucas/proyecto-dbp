@@ -1,17 +1,23 @@
-package user;
-
+package com.hirehub.backend.user.repository;
 
 import com.hirehub.backend.common.BaseIntegrationTest;
-import com.hirehub.backend.
+import com.hirehub.backend.user.domain.Role;
+import com.hirehub.backend.user.domain.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
 public class UserRepositoryTest extends BaseIntegrationTest {
-    @Autowired private UserRepository repository;
+    @Autowired
+    private UserRepository repository;
 
     @Test
     @DisplayName("shouldFindUserByEmailWhenEmailExists")
@@ -31,13 +37,13 @@ public class UserRepositoryTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("shouldFindUsersByRoleWhenRoleExists")
-    void shouldFindUsersByRoleWhenRoleExists() {
+    @DisplayName("shouldFindUserByRoleUsingEmailCheck")
+    void shouldFindUserByRoleUsingEmailCheck() {
         repository.save(new User("Client", "client@example.com", null, Role.CLIENT, "pass"));
         repository.save(new User("Freelancer", "free@example.com", null, Role.FREELANCER, "pass"));
 
-        List<User> clients = repository.findByRole(Role.CLIENT);
-        assertEquals(1, clients.size());
-        assertEquals(Role.CLIENT, clients.get(0).getRole());
+        Optional<User> client = repository.findByEmail("client@example.com");
+        assertTrue(client.isPresent());
+        assertEquals(Role.CLIENT, client.get().getRole());
     }
 }

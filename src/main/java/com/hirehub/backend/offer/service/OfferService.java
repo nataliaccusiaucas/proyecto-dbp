@@ -9,7 +9,6 @@ import com.hirehub.backend.jobrequest.repository.JobRequestRepository;
 import com.hirehub.backend.user.domain.User;
 import com.hirehub.backend.user.repository.UserRepository;
 import com.hirehub.backend.commission.service.CommissionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class OfferService {
     private final UserRepository userRepository;
     private final CommissionService commissionService;
 
-    @Autowired
+    
     public OfferService(
             OfferRepository offerRepository,
             JobRequestRepository jobRequestRepository,
