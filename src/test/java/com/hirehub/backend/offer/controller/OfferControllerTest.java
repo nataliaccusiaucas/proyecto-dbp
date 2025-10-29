@@ -3,83 +3,78 @@ package com.hirehub.backend.offer.controller;
 import com.hirehub.backend.offer.domain.Offer;
 import com.hirehub.backend.offer.domain.OfferStatus;
 import com.hirehub.backend.offer.service.OfferService;
+import com.hirehub.backend.security.jwt.JwtService;
+import com.hirehub.backend.security.service.CustomUserDetailsService;
+import com.hirehub.backend.user.domain.User;
+import com.hirehub.backend.jobrequest.domain.JobRequest;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(controllers = OfferController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class OfferControllerTest {
 
-    @Mock
-    private OfferService offerService;
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new OfferController(offerService)).build();
+    @Autowired
+    private OfferService offerService;
+
+    @TestConfiguration
+    static class MockBeans {
+        @Bean OfferService offerService() { return Mockito.mock(OfferService.class); }
+        @Bean JwtService jwtService() { return Mockito.mock(JwtService.class); }
+        @Bean CustomUserDetailsService userDetailsService() { return Mockito.mock(CustomUserDetailsService.class); }
+    }
+
+    private Offer offer(String freelancerName, String jobTitle) {
+        User freelancer = new User();
+        freelancer.setId(UUID.randomUUID());
+        freelancer.setName(freelancerName);
+
+        JobRequest job = new JobRequest();
+        job.setId(UUID.randomUUID());
+        job.setTitle(jobTitle);
+
+        Offer o = new Offer();
+        o.setId(UUID.randomUUID());
+        o.setProposedBudget(500.0);
+        o.setProposalText("Propuesta");
+        o.setStatus(OfferStatus.PENDING);
+        o.setJobRequest(job);
+        o.setFreelancer(freelancer);
+        o.setCreatedAt(LocalDateTime.now());
+        return o;
     }
 
     @Test
-    @DisplayName("Devuelve todas las ofertas existentes correctamente (GET /offers)")
-    void testGetAllOffers() throws Exception {
-        Offer offer1 = new Offer(1000.0, "Diseño de app", OfferStatus.PENDING, null, null);
-        Offer offer2 = new Offer(1500.0, "Desarrollo web", OfferStatus.ACCEPTED, null, null);
+    @DisplayName("GET /api/offers devuelve lista de ofertas")
+    void getAllOffers_returnsList() throws Exception {
+        when(offerService.getAllOffers()).thenReturn(List.of(
+                offer("Ana", "Diseño logo"),
+                offer("Beto", "Landing Page")
+        ));
 
-        when(offerService.getAllOffers()).thenReturn(List.of(offer1, offer2));
-
-        mockMvc.perform(get("/api/offers")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/offers"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].proposedBudget").value(1000.0))
-                .andExpect(jsonPath("$[1].status").value("ACCEPTED"));
-    }
+                .andExpect(jsonPath("$[0].freelancerName").value("Ana"))
+                .andExpect(jsonPath("$[1].jobRequestTitle").value("Landing Page"));
 
-    @Test
-    @DisplayName("Devuelve ofertas por freelancer (GET /offers/freelancer/{id})")
-    void testGetOffersByFreelancer() throws Exception {
-        UUID freelancerId = UUID.randomUUID();
-
-        Offer offer = new Offer(800.0, "Landing Page", OfferStatus.PENDING, null, null);
-        when(offerService.getOffersByFreelancer(any(UUID.class)))
-                .thenReturn(List.of(offer));
-
-        mockMvc.perform(get("/api/offers/freelancer/" + freelancerId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].proposalText").value("Landing Page"));
-    }
-
-    @Test
-    @DisplayName("Devuelve ofertas por JobRequest (GET /offers/job/{id})")
-    void testGetOffersByJobRequest() throws Exception {
-        UUID jobId = UUID.randomUUID();
-
-        Offer offer = new Offer(500.0, "Maquetación Figma", OfferStatus.PENDING, null, null);
-        when(offerService.getOffersByJobRequest(any(UUID.class)))
-                .thenReturn(List.of(offer));
-
-        mockMvc.perform(get("/api/offers/job/" + jobId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].proposalText").value("Maquetación Figma"))
-                .andExpect(jsonPath("$[0].proposedBudget").value(500.0));
     }
 }

@@ -1,5 +1,6 @@
 package com.hirehub.backend.freelancerprofile.service;
 
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
 import com.hirehub.backend.freelancerprofile.domain.FreelancerProfile;
 import com.hirehub.backend.freelancerprofile.dto.FreelancerProfileResponseDTO;
 import com.hirehub.backend.freelancerprofile.dto.FreelancerProfileUpdateDTO;
@@ -21,9 +22,10 @@ public class FreelancerProfileService {
 
     public FreelancerProfileResponseDTO getProfileByFreelancer(UUID freelancerId) {
         var user = userRepository.findById(freelancerId)
-                .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer no encontrado con ID: " + freelancerId));
+
         var profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalArgumentException("Perfil no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil no encontrado para el freelancer: " + user.getName()));
 
         return new FreelancerProfileResponseDTO(
                 profile.getId(),
@@ -40,9 +42,8 @@ public class FreelancerProfileService {
 
     public FreelancerProfileResponseDTO updateProfile(UUID freelancerId, FreelancerProfileUpdateDTO dto) {
         var user = userRepository.findById(freelancerId)
-                .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer no encontrado con ID: " + freelancerId));
 
-        // ✅ Si el perfil no existe, se crea automáticamente
         var profile = profileRepository.findByUser(user)
                 .orElseGet(() -> {
                     var newProfile = new FreelancerProfile();

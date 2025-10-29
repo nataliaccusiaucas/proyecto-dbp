@@ -1,5 +1,8 @@
 package com.hirehub.backend.security.service;
 
+import com.hirehub.backend.common.exception.DuplicateResourceException;
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
+import com.hirehub.backend.common.exception.UnauthorizedException;
 import com.hirehub.backend.user.domain.Role;
 import com.hirehub.backend.user.domain.User;
 import com.hirehub.backend.user.dto.AuthRequestDTO;
@@ -8,6 +11,7 @@ import com.hirehub.backend.user.dto.RegisterRequestDTO;
 import com.hirehub.backend.user.repository.UserRepository;
 import com.hirehub.backend.security.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +36,7 @@ public class AuthService {
 
     public AuthResponseDTO register(RegisterRequestDTO request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new DuplicateResourceException("El email ya está registrado: " + request.email());
         }
 
         User user = new User();
@@ -44,24 +48,22 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
-
-        return new AuthResponseDTO("Usuario registrado correctamente: " + user.getEmail(), token);
+        return new AuthResponseDTO("Usuario registrado correctamente", null);
     }
 
     public AuthResponseDTO login(AuthRequestDTO request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            );
+        } catch (BadCredentialsException e) {
+            throw new UnauthorizedException("Credenciales incorrectas. Verifica tu correo o contraseña.");
+        }
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + request.email()));
 
         String token = jwtService.generateToken(user);
-
         return new AuthResponseDTO("Login exitoso", token);
     }
 }

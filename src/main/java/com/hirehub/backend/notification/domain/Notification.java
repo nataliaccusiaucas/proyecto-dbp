@@ -2,9 +2,14 @@ package com.hirehub.backend.notification.domain;
 
 import com.hirehub.backend.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "notifications")
 public class Notification {
@@ -24,6 +29,7 @@ public class Notification {
     @JoinColumn(name = "recipient_id")
     private User recipient;
 
+    @Setter
     private boolean read = false;
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -35,13 +41,5 @@ public class Notification {
         this.recipient = recipient;
     }
 
-    public UUID getId() { return id; }
-    public NotificationType getType() { return type; }
-    public String getMessage() { return message; }
-    public User getRecipient() { return recipient; }
-    public boolean isRead() { return read; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 
-
-    public void setRead(boolean read) { this.read = read; }
 }

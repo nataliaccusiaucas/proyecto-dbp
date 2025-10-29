@@ -1,9 +1,12 @@
 package com.hirehub.backend.notification.controller;
 
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
 import com.hirehub.backend.notification.domain.Notification;
 import com.hirehub.backend.notification.service.NotificationService;
 import com.hirehub.backend.user.domain.User;
 import com.hirehub.backend.user.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/notifications")
+@CrossOrigin(origins = "*")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -21,15 +25,18 @@ public class NotificationController {
         this.userRepository = userRepository;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
     @GetMapping("/user/{userId}")
-    public List<Notification> getUserNotifications(@PathVariable UUID userId) {
+    public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
-        return notificationService.getNotificationsByUser(user);
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + userId));
+        return ResponseEntity.ok(notificationService.getNotificationsByUser(user));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
     @PatchMapping("/{notificationId}/read")
-    public void markNotificationAsRead(@PathVariable UUID notificationId) {
+    public ResponseEntity<Void> markNotificationAsRead(@PathVariable UUID notificationId) {
         notificationService.markAsRead(notificationId);
+        return ResponseEntity.noContent().build();
     }
 }

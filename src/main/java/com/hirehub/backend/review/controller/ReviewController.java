@@ -6,14 +6,16 @@ import com.hirehub.backend.review.dto.ReviewResponseDTO;
 import com.hirehub.backend.review.dto.ReviewSummaryDTO;
 import com.hirehub.backend.review.service.ReviewService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reviews")
+@CrossOrigin(origins = "*")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -22,9 +24,33 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
     @PostMapping
-    public ReviewResponseDTO createReview(@Valid @RequestBody ReviewRequestDTO dto) {
+    public ResponseEntity<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO dto) {
         Review review = reviewService.createReview(dto);
+        return ResponseEntity.ok(mapToResponse(review));
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/freelancer/{freelancerId}")
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsForFreelancer(@PathVariable UUID freelancerId) {
+        var reviews = reviewService.getReviewsForFreelancer(freelancerId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+        return ResponseEntity.ok(reviews);
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/freelancer/{freelancerId}/summary")
+    public ResponseEntity<ReviewSummaryDTO> getFreelancerReviewSummary(@PathVariable UUID freelancerId) {
+        var reviews = reviewService.getReviewsForFreelancer(freelancerId);
+        double avg = reviewService.calculateAverageRating(freelancerId);
+        var dtoList = reviews.stream().map(this::mapToResponse).toList();
+        return ResponseEntity.ok(new ReviewSummaryDTO(avg, dtoList.size(), dtoList));
+    }
+
+    private ReviewResponseDTO mapToResponse(Review review) {
         return new ReviewResponseDTO(
                 review.getId(),
                 review.getAuthor().getName(),
@@ -35,42 +61,4 @@ public class ReviewController {
                 review.getCreatedAt()
         );
     }
-
-    @GetMapping("/freelancer/{freelancerId}")
-    public List<ReviewResponseDTO> getReviewsForFreelancer(@PathVariable UUID freelancerId) {
-    return reviewService.getReviewsForFreelancer(freelancerId)
-            .stream()
-            .map(r -> new ReviewResponseDTO(
-                    r.getId(),
-                    r.getAuthor().getName(),
-                    r.getTarget().getName(),
-                    r.getJobRequest().getTitle(),
-                    r.getRating(),
-                    r.getComment(),
-                    r.getCreatedAt()
-            ))
-            .collect(Collectors.toList());
-}
-
-    @GetMapping("/freelancer/{freelancerId}/summary")
-    public ReviewSummaryDTO getFreelancerReviewSummary(@PathVariable UUID freelancerId) {
-    var reviews = reviewService.getReviewsForFreelancer(freelancerId);
-
-    double averageRating = reviewService.calculateAverageRating(freelancerId);
-
-    var reviewDTOs = reviews.stream()
-            .map(r -> new ReviewResponseDTO(
-                    r.getId(),
-                    r.getAuthor().getName(),
-                    r.getTarget().getName(),
-                    r.getJobRequest().getTitle(),
-                    r.getRating(),
-                    r.getComment(),
-                    r.getCreatedAt()
-            ))
-            .toList();
-
-    return new ReviewSummaryDTO(averageRating, reviewDTOs.size(), reviewDTOs);
-}
-
 }

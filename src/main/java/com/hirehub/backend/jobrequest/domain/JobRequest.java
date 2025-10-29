@@ -2,9 +2,13 @@ package com.hirehub.backend.jobrequest.domain;
 
 import com.hirehub.backend.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter
 @Entity
 @Table(name = "job_requests")
 public class JobRequest {
@@ -13,17 +17,22 @@ public class JobRequest {
     @GeneratedValue
     private UUID id;
 
+    @Setter
     @Column(nullable = false)
     private String title;
 
+    @Setter
     @Column(nullable = false, length = 2000)
     private String description;
 
+    @Setter
     private Double budget;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private JobStatus status;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
@@ -41,17 +50,9 @@ public class JobRequest {
         this.createdAt = LocalDateTime.now();
     }
 
-    public UUID getId() { return id; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public Double getBudget() { return budget; }
-    public JobStatus getStatus() { return status; }
-    public User getClient() { return client; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setId(UUID uuid) {
+    }
 
-    public void setTitle(String title) { this.title = title; }
-    public void setDescription(String description) { this.description = description; }
-    public void setBudget(Double budget) { this.budget = budget; }
-    public void setStatus(JobStatus status) { this.status = status; }
-    public void setClient(User client) { this.client = client; }
+    public void setCreatedAt(LocalDateTime now) {
+    }
 }

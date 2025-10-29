@@ -4,6 +4,7 @@ import com.hirehub.backend.freelancerprofile.dto.FreelancerProfileResponseDTO;
 import com.hirehub.backend.freelancerprofile.dto.FreelancerProfileUpdateDTO;
 import com.hirehub.backend.freelancerprofile.service.FreelancerProfileService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,11 +20,13 @@ public class FreelancerProfileController {
         this.profileService = profileService;
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/{freelancerId}/profile")
     public ResponseEntity<FreelancerProfileResponseDTO> getProfile(@PathVariable UUID freelancerId) {
         return ResponseEntity.ok(profileService.getProfileByFreelancer(freelancerId));
     }
 
+    @PreAuthorize("permitAll()")
     @PutMapping("/{freelancerId}/profile")
     public ResponseEntity<FreelancerProfileResponseDTO> updateProfile(
             @PathVariable UUID freelancerId,

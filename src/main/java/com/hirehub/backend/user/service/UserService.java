@@ -1,5 +1,7 @@
 package com.hirehub.backend.user.service;
 
+import com.hirehub.backend.common.exception.DuplicateResourceException;
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
 import com.hirehub.backend.user.domain.Role;
 import com.hirehub.backend.user.domain.User;
 import com.hirehub.backend.user.dto.RegisterRequestDTO;
@@ -24,21 +26,20 @@ public class UserService {
 
     public UserResponseDTO createUser(RegisterRequestDTO request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("El correo ya está registrado.");
+            throw new DuplicateResourceException("El correo " + request.email() + " ya está registrado.");
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = new User(
-            request.name(),
-            request.email(),
-            request.phone(),
-            request.role() != null
-            ? Role.valueOf(request.role().toUpperCase())
-            : Role.CLIENT,
-            encodedPassword
-);
-
+                request.name(),
+                request.email(),
+                request.phone(),
+                request.role() != null
+                        ? Role.valueOf(request.role().toUpperCase())
+                        : Role.CLIENT,
+                encodedPassword
+        );
 
         User saved = userRepository.save(user);
         return mapToResponse(saved);
@@ -53,7 +54,7 @@ public class UserService {
     public UserResponseDTO getUserById(UUID id) {
         return userRepository.findById(id)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
     }
 
     private UserResponseDTO mapToResponse(User user) {

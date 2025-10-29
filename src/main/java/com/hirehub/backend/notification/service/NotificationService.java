@@ -1,10 +1,12 @@
 package com.hirehub.backend.notification.service;
 
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
 import com.hirehub.backend.notification.domain.Notification;
 import com.hirehub.backend.notification.domain.NotificationType;
 import com.hirehub.backend.notification.repository.NotificationRepository;
 import com.hirehub.backend.user.domain.User;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class NotificationService {
 
     public void markAsRead(UUID notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Notificación no encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException("Notificación no encontrada con ID: " + notificationId));
         notification.setRead(true);
         notificationRepository.save(notification);
     }

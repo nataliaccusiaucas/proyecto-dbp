@@ -1,5 +1,6 @@
 package com.hirehub.backend.review.service;
 
+import com.hirehub.backend.common.exception.ResourceNotFoundException;
 import com.hirehub.backend.review.domain.Review;
 import com.hirehub.backend.review.dto.ReviewRequestDTO;
 import com.hirehub.backend.review.repository.ReviewRepository;
@@ -25,11 +26,13 @@ public class ReviewService {
 
     public Review createReview(ReviewRequestDTO dto) {
         var author = userRepository.findById(dto.authorId())
-                .orElseThrow(() -> new IllegalArgumentException("Autor no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Autor no encontrado con ID: " + dto.authorId()));
+
         var target = userRepository.findById(dto.targetId())
-                .orElseThrow(() -> new IllegalArgumentException("Usuario objetivo no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario objetivo no encontrado con ID: " + dto.targetId()));
+
         var jobRequest = jobRequestRepository.findById(dto.jobRequestId())
-                .orElseThrow(() -> new IllegalArgumentException("Trabajo no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Trabajo no encontrado con ID: " + dto.jobRequestId()));
 
         Review review = new Review(author, target, jobRequest, dto.rating(), dto.comment());
         reviewRepository.save(review);
@@ -48,13 +51,13 @@ public class ReviewService {
 
     public List<Review> getReviewsForFreelancer(UUID freelancerId) {
         var freelancer = userRepository.findById(freelancerId)
-                .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer no encontrado con ID: " + freelancerId));
         return reviewRepository.findByTarget(freelancer);
     }
 
     public double calculateAverageRating(UUID freelancerId) {
         var freelancer = userRepository.findById(freelancerId)
-                .orElseThrow(() -> new IllegalArgumentException("Freelancer no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Freelancer no encontrado con ID: " + freelancerId));
         var reviews = reviewRepository.findByTarget(freelancer);
         if (reviews.isEmpty()) return 0.0;
         return reviews.stream()

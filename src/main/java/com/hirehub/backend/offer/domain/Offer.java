@@ -3,6 +3,8 @@ package com.hirehub.backend.offer.domain;
 import com.hirehub.backend.jobrequest.domain.JobRequest;
 import com.hirehub.backend.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,19 +16,24 @@ public class Offer {
     @GeneratedValue
     private UUID id;
 
+    @Setter
     @Column(nullable = false)
     private Double proposedBudget;
 
+    @Setter
     @Column(nullable = false, length = 2000)
     private String proposalText;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private OfferStatus status;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "job_request_id")
     private JobRequest jobRequest;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name = "freelancer_id")
     private User freelancer;
@@ -52,9 +59,9 @@ public class Offer {
     public User getFreelancer() { return freelancer; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public void setProposedBudget(Double proposedBudget) { this.proposedBudget = proposedBudget; }
-    public void setProposalText(String proposalText) { this.proposalText = proposalText; }
-    public void setStatus(OfferStatus status) { this.status = status; }
-    public void setJobRequest(JobRequest jobRequest) { this.jobRequest = jobRequest; }
-    public void setFreelancer(User freelancer) { this.freelancer = freelancer; }
+    public void setCreatedAt(LocalDateTime now) {
+    }
+
+    public void setId(UUID uuid) {
+    }
 }

@@ -4,5 +4,5 @@ public enum NotificationType {
     OFFER_CREATED,
     OFFER_ACCEPTED,
     OFFER_REJECTED,
-    JOB_REQUEST_CREATED
+    SYSTEM, JOB_REQUEST_CREATED
 }
