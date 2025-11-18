@@ -65,6 +65,21 @@ public class OfferService {
         return offer;
     }
 
+    public List<Offer> getOffersForClient(UUID clientId) {
+
+        User client = userRepository.findById(clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: " + clientId));
+
+        // Obtener TODOS los jobRequests del cliente
+        List<JobRequest> clientRequests = jobRequestRepository.findByClient(client);
+
+        // Juntar TODAS las ofertas recibidas en todos sus job requests
+        return clientRequests.stream()
+                .flatMap(req -> offerRepository.findByJobRequest(req).stream())
+                .toList();
+    }
+
+
     public List<Offer> getOffersByJobRequest(UUID jobRequestId) {
         JobRequest jobRequest = jobRequestRepository.findById(jobRequestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada con ID: " + jobRequestId));

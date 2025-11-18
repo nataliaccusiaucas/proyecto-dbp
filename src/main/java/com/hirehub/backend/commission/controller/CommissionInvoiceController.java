@@ -4,6 +4,7 @@ import com.hirehub.backend.commission.domain.CommissionInvoice;
 import com.hirehub.backend.commission.dto.CommissionInvoiceResponseDTO;
 import com.hirehub.backend.commission.service.CommissionInvoiceService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,4 +35,15 @@ public class CommissionInvoiceController {
         CommissionInvoice invoice = commissionInvoiceService.markAsPaid(invoiceId);
         return ResponseEntity.ok(new CommissionInvoiceResponseDTO(invoice));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<CommissionInvoiceResponseDTO>> getAllInvoices() {
+        List<CommissionInvoiceResponseDTO> response = commissionInvoiceService.getAllInvoices()
+                .stream()
+                .map(CommissionInvoiceResponseDTO::new)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
 }

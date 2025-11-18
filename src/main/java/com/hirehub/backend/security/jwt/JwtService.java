@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 @Service
 public class JwtService {
 
@@ -32,22 +33,39 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder()
+
+        JwtBuilder builder = Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256);
+
+        // Solo agregar expiración si NO está en modo desarrollo
+        if (!isDev()) {
+            builder.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
+        }
+
+        return builder.compact();
+    }
+
+    private boolean isDev() {
+        return "dev".equals(System.getenv("SPRING_PROFILES_ACTIVE"));
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return username.equals(userDetails.getUsername())
+                && (!hasExpiration(token) || !isTokenExpired(token));
+    }
+
+    private boolean hasExpiration(String token) {
+        return extractAllClaims(token).getExpiration() != null;
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        Date exp = extractExpiration(token);
+        if (exp == null) return false;
+        return exp.before(new Date());
     }
 
     private Date extractExpiration(String token) {
@@ -63,8 +81,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-    byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-    return Keys.hmacShaKeyFor(keyBytes);
-}
-
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 }

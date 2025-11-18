@@ -7,6 +7,7 @@ import java.util.UUID;
 public record JobRequestResponseDTO(
         UUID id,
         String title,
+        String category,
         String description,
         Double budget,
         JobStatus status,

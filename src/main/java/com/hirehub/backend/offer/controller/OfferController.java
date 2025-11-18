@@ -24,7 +24,7 @@ public class OfferController {
     public OfferController(OfferService offerService) {
         this.offerService = offerService;
     }
-    @PreAuthorize("hasAnyRole('FREELANCER', 'ADMIN')")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<OfferResponseDTO> createOffer(@Valid @RequestBody OfferRequestDTO dto) {
         Offer offer = offerService.createOffer(
@@ -36,7 +36,7 @@ public class OfferController {
         return ResponseEntity.ok(mapToResponse(offer));
     }
 
-    @PreAuthorize("hasAnyRole('CLIENT', 'ADMIN')")
+    @PreAuthorize("permitAll()")
     @PatchMapping("/{offerId}/status")
     public ResponseEntity<OfferResponseDTO> updateOfferStatus(
             @PathVariable UUID offerId,
@@ -45,7 +45,7 @@ public class OfferController {
         return ResponseEntity.ok(mapToResponse(offerService.updateOfferStatus(offerId, status)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/job-request/{jobRequestId}")
     public ResponseEntity<List<OfferResponseDTO>> getOffersByJobRequest(@PathVariable UUID jobRequestId) {
         var offers = offerService.getOffersByJobRequest(jobRequestId)
@@ -55,7 +55,7 @@ public class OfferController {
         return ResponseEntity.ok(offers);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'FREELANCER')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/freelancer/{freelancerId}")
     public ResponseEntity<List<OfferResponseDTO>> getOffersByFreelancer(@PathVariable UUID freelancerId) {
         var offers = offerService.getOffersByFreelancer(freelancerId)
@@ -64,8 +64,19 @@ public class OfferController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(offers);
     }
+    @PreAuthorize("permitAll()")
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<OfferResponseDTO>> getOffersForClient(@PathVariable UUID clientId) {
 
-    @PreAuthorize("hasRole('ADMIN')")
+        List<OfferResponseDTO> offers = offerService.getOffersForClient(clientId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return ResponseEntity.ok(offers);
+    }
+
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<List<OfferResponseDTO>> getAllOffers() {
         var offers = offerService.getAllOffers()

@@ -44,7 +44,10 @@ public class AuthService {
         user.setEmail(request.email());
         user.setPhone(request.phone());
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(Role.valueOf(request.role().toUpperCase()));
+        String roleValue = (request.role() != null && !request.role().isBlank())
+                ? request.role().toUpperCase()
+                : "CLIENT";
+        user.setRole(Role.valueOf(roleValue));
 
         userRepository.save(user);
 

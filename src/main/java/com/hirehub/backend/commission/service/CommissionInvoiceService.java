@@ -64,5 +64,7 @@ public class CommissionInvoiceService {
         return commissionInvoiceRepository.findByFreelancer(freelancer);
     }
 
-    
+    public List<CommissionInvoice> getAllInvoices() {
+        return commissionInvoiceRepository.findAll();
+    }
 }

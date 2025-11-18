@@ -25,7 +25,7 @@ public class NotificationController {
         this.userRepository = userRepository;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
+    @PreAuthorize("permitAll()")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable UUID userId) {
         User user = userRepository.findById(userId)
@@ -33,7 +33,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getNotificationsByUser(user));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
+    @PreAuthorize("permitAll()")
     @PatchMapping("/{notificationId}/read")
     public ResponseEntity<Void> markNotificationAsRead(@PathVariable UUID notificationId) {
         notificationService.markAsRead(notificationId);

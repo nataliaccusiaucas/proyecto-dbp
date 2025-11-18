@@ -26,12 +26,7 @@ public class JobRequestController {
     @PreAuthorize("hasRole('CLIENT')")
     @PostMapping
     public ResponseEntity<JobRequestResponseDTO> createJobRequest(@Valid @RequestBody JobRequestRequestDTO request) {
-        JobRequest jobRequest = jobRequestService.createJobRequest(
-                request.title(),
-                request.description(),
-                request.budget(),
-                request.clientId()
-        );
+        JobRequest jobRequest = jobRequestService.createJobRequest(request);
         return ResponseEntity.ok(mapToResponse(jobRequest));
     }
 
@@ -70,6 +65,7 @@ public class JobRequestController {
         return new JobRequestResponseDTO(
                 jobRequest.getId(),
                 jobRequest.getTitle(),
+                jobRequest.getCategory(),
                 jobRequest.getDescription(),
                 jobRequest.getBudget(),
                 jobRequest.getStatus(),

@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record JobRequestRequestDTO(
+
+        @NotBlank(message = "La categoría es obligatoria")
+        String category,
+
         @NotBlank(message = "El título es obligatorio")
         String title,
 

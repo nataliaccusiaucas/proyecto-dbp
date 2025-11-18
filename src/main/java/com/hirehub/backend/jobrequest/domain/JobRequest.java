@@ -19,6 +19,10 @@ public class JobRequest {
 
     @Setter
     @Column(nullable = false)
+    private String category;
+
+    @Setter
+    @Column(nullable = false)
     private String title;
 
     @Setter
@@ -41,8 +45,9 @@ public class JobRequest {
 
     public JobRequest() {}
 
-    public JobRequest(String title, String description, Double budget, JobStatus status, User client) {
+    public JobRequest(String title,String category, String description, Double budget, JobStatus status, User client) {
         this.title = title;
+        this.category=
         this.description = description;
         this.budget = budget;
         this.status = status;

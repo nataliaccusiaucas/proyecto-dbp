@@ -24,7 +24,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT', 'FREELANCER')")
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO dto) {
         Review review = reviewService.createReview(dto);
