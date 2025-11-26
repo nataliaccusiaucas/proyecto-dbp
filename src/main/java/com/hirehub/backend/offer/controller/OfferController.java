@@ -24,6 +24,7 @@ public class OfferController {
     public OfferController(OfferService offerService) {
         this.offerService = offerService;
     }
+
     @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<OfferResponseDTO> createOffer(@Valid @RequestBody OfferRequestDTO dto) {
@@ -64,10 +65,10 @@ public class OfferController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(offers);
     }
+
     @PreAuthorize("permitAll()")
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<OfferResponseDTO>> getOffersForClient(@PathVariable UUID clientId) {
-
         List<OfferResponseDTO> offers = offerService.getOffersForClient(clientId)
                 .stream()
                 .map(this::mapToResponse)
@@ -87,6 +88,10 @@ public class OfferController {
     }
 
     private OfferResponseDTO mapToResponse(Offer offer) {
+
+        var f = offer.getFreelancer();
+        var p = f.getProfile(); // perfil del freelancer
+
         return new OfferResponseDTO(
                 offer.getId(),
                 offer.getProposedBudget(),
@@ -94,9 +99,14 @@ public class OfferController {
                 offer.getStatus(),
                 offer.getJobRequest().getId(),
                 offer.getJobRequest().getTitle(),
-                offer.getFreelancer().getId(),
-                offer.getFreelancer().getName(),
-                offer.getCreatedAt()
+                f.getId(),
+                f.getName(),
+                offer.getCreatedAt(),
+                (p != null ? p.getTitle() : null),
+                (p != null ? p.getDescription() : null),
+                (p != null ? p.getSkills() : null),
+                (p != null ? p.getPortfolioUrl() : null),
+                (p != null ? p.getLocation() : null)
         );
     }
 }

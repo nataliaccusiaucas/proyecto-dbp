@@ -11,6 +11,7 @@ import com.hirehub.backend.user.domain.User;
 import com.hirehub.backend.user.repository.UserRepository;
 import com.hirehub.backend.commission.service.CommissionService;
 import org.springframework.stereotype.Service;
+import com.hirehub.backend.chat.service.ConversationService;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,15 +22,18 @@ public class OfferService {
     private final JobRequestRepository jobRequestRepository;
     private final UserRepository userRepository;
     private final CommissionService commissionService;
+    private final ConversationService conversationService;
 
     public OfferService(OfferRepository offerRepository,
                         JobRequestRepository jobRequestRepository,
                         UserRepository userRepository,
-                        CommissionService commissionService) {
+                        CommissionService commissionService,
+                        ConversationService conversationService) {
         this.offerRepository = offerRepository;
         this.jobRequestRepository = jobRequestRepository;
         this.userRepository = userRepository;
         this.commissionService = commissionService;
+        this.conversationService = conversationService;
     }
 
     public Offer createOffer(Double proposedBudget, String proposalText, UUID jobRequestId, UUID freelancerId) {
@@ -60,6 +64,12 @@ public class OfferService {
                     offer.getJobRequest(),
                     offer.getProposedBudget()
             );
+
+            conversationService.getOrCreateForOffer(
+                    jobRequest.getClient(),
+                    offer.getFreelancer(),
+                    jobRequest
+            );
         }
 
         return offer;
@@ -70,10 +80,10 @@ public class OfferService {
         User client = userRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: " + clientId));
 
-        // Obtener TODOS los jobRequests del cliente
+
         List<JobRequest> clientRequests = jobRequestRepository.findByClient(client);
 
-        // Juntar TODAS las ofertas recibidas en todos sus job requests
+
         return clientRequests.stream()
                 .flatMap(req -> offerRepository.findByJobRequest(req).stream())
                 .toList();

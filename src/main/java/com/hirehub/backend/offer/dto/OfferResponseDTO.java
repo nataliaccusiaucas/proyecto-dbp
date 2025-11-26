@@ -13,5 +13,11 @@ public record OfferResponseDTO(
         String jobRequestTitle,
         UUID freelancerId,
         String freelancerName,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        
+        String freelancerTitle,
+        String freelancerDescription,
+        String freelancerSkills,
+        String freelancerPortfolioUrl,
+        String freelancerLocation
 ) {}

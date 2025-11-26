@@ -1,5 +1,6 @@
 package com.hirehub.backend.user.domain;
 
+import com.hirehub.backend.freelancerprofile.domain.FreelancerProfile;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,7 @@ public class User implements UserDetails {
 
     @Getter
     private String phone;
+
     @Getter
     private String avatarUrl;
 
@@ -43,7 +45,7 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private String password; 
+    private String password;
 
     @Getter
     @Column(name = "completed_jobs")
@@ -52,6 +54,13 @@ public class User implements UserDetails {
     @Getter
     @Column(name = "average_rating")
     private Double averageRating = 0.0;
+
+    @OneToOne(mappedBy = "user")
+    private FreelancerProfile profile;
+
+    public FreelancerProfile getProfile() {
+        return profile;
+    }
 
     public User() {
         this.createdAt = LocalDateTime.now();
@@ -73,7 +82,6 @@ public class User implements UserDetails {
         this.completedJobs++;
     }
 
-
     @Override
     public String getPassword() {
         return password;
@@ -81,7 +89,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; 
+        return email;
     }
 
     @Override
@@ -90,22 +98,11 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
+    public boolean isAccountNonExpired() { return true; }
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
+    public boolean isAccountNonLocked() { return true; }
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
+    public boolean isCredentialsNonExpired() { return true; }
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }
