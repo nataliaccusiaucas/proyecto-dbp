@@ -2,6 +2,8 @@ package com.hirehub.backend.commission.domain;
 
 import com.hirehub.backend.user.domain.User;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,6 +39,10 @@ public class CommissionInvoice {
         this.amount = amount;
         this.issuedAt = LocalDateTime.now();
         this.status = InvoiceStatus.PENDING;
+
+        this.dueDate = LocalDate.now()
+                .plusDays(30)
+                .atTime(23, 59);
     }
 
     public UUID getId() {

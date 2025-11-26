@@ -18,7 +18,7 @@ public class CommissionInvoiceResponseDTO {
         this.freelancerName = invoice.getFreelancer().getName();
         this.amount = invoice.getAmount();
         this.issuedAt = invoice.getIssuedAt();
-        this.dueDate = invoice.getDueDate();
+        this.dueDate = invoice.getDueDate() != null ? invoice.getDueDate() : null;
         this.status = invoice.getStatus();
     }
 

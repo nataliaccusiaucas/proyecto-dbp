@@ -18,6 +18,7 @@ public class CommissionService {
     private final CommissionRepository commissionRepository;
     private final CommissionInvoiceService commissionInvoiceService;
     private final UserRepository userRepository;
+    private final JobRequestRepository jobRequestRepository;
 
     public CommissionService(
             CommissionRepository commissionRepository,
@@ -27,6 +28,7 @@ public class CommissionService {
         this.commissionRepository = commissionRepository;
         this.commissionInvoiceService = commissionInvoiceService;
         this.userRepository = userRepository;
+        this.jobRequestRepository = jobRequestRepository;
     }
 
     public Commission createCommission(User freelancer, JobRequest jobRequest, Double jobBudget) {
