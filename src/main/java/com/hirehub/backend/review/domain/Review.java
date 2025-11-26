@@ -49,9 +49,11 @@ public class Review {
         this.comment = comment;
     }
 
-    public void setId(UUID uuid) {
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void setCreatedAt(LocalDateTime now) {
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
