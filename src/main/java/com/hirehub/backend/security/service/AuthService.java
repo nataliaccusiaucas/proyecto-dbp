@@ -44,7 +44,7 @@ public class AuthService {
         User user = new User();
         user.setName(request.name());
         user.setEmail(request.email());
-        user.setPhone(request.phone());
+        user.setPhone(null);
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.valueOf(
                 (request.role() == null || request.role().isBlank()) ? "CLIENT" : request.role().toUpperCase()
