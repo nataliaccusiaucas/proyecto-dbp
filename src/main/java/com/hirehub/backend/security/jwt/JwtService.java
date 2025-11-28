@@ -1,6 +1,9 @@
 package com.hirehub.backend.security.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +43,6 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256);
 
-        // Solo agregar expiración si NO está en modo desarrollo
         if (!isDev()) {
             builder.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
         }
@@ -54,7 +56,8 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername())
+
+        return (username.equals(userDetails.getUsername()))
                 && (!hasExpiration(token) || !isTokenExpired(token));
     }
 
