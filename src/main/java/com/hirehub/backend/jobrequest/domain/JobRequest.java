@@ -9,37 +9,33 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
 @Entity
 @Table(name = "job_requests")
+@Getter
+@Setter
 public class JobRequest {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Setter
     @ElementCollection
-    @CollectionTable(name = "job_request_categories", joinColumns = @JoinColumn(name = "job_request_id"))
+    @CollectionTable(name = "job_request_categories",
+            joinColumns = @JoinColumn(name = "job_request_id"))
     @Column(name = "category")
     private List<String> categories;
 
-    @Setter
     @Column(nullable = false)
     private String title;
 
-    @Setter
     @Column(nullable = false, length = 2000)
     private String description;
 
-    @Setter
     private Double budget;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     private JobStatus status;
 
-    @Setter
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
@@ -48,9 +44,14 @@ public class JobRequest {
 
     public JobRequest() {}
 
-    public JobRequest(String title, List<String> categories, String description,
-                      Double budget, JobStatus status, User client) {
-
+    public JobRequest(
+            String title,
+            List<String> categories,
+            String description,
+            Double budget,
+            JobStatus status,
+            User client
+    ) {
         this.title = title;
         this.categories = categories;
         this.description = description;
