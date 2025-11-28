@@ -52,9 +52,20 @@ public class JobRequestNotificationListener {
                     var profile = profileRepository.findByUser(u).orElse(null);
                     if (profile == null || profile.getSkills() == null) return false;
 
-                    return Arrays.stream(profile.getSkills().toLowerCase().split(","))
+                    List<String> jobCategories = jobRequest.getCategories();
+
+
+                    List<String> freelancerSkills = Arrays.stream(profile.getSkills().toLowerCase().split(","))
                             .map(String::trim)
-                            .anyMatch(jobText::contains);
+                            .toList();
+
+
+                    for (String jobCat : jobCategories) {
+                        if (freelancerSkills.stream().anyMatch(skill -> skill.equalsIgnoreCase(jobCat))) {
+                            return true;
+                        }
+                    }
+                    return false;
                 })
                 .toList();
 

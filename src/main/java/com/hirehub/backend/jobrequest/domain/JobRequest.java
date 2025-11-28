@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,8 +19,10 @@ public class JobRequest {
     private UUID id;
 
     @Setter
-    @Column(nullable = false)
-    private String category;
+    @ElementCollection
+    @CollectionTable(name = "job_request_categories", joinColumns = @JoinColumn(name = "job_request_id"))
+    @Column(name = "category")
+    private List<String> categories;
 
     @Setter
     @Column(nullable = false)
@@ -45,9 +48,9 @@ public class JobRequest {
 
     public JobRequest() {}
 
-    public JobRequest(String title,String category, String description, Double budget, JobStatus status, User client) {
+    public JobRequest(String title,List<String> categories,String description, Double budget, JobStatus status, User client) {
         this.title = title;
-        this.category=
+        this.categories=categories;
         this.description = description;
         this.budget = budget;
         this.status = status;
