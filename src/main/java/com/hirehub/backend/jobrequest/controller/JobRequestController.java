@@ -35,7 +35,7 @@ public class JobRequestController {
     public ResponseEntity<JobRequest> markJobAsCompleted(@PathVariable UUID jobRequestId) {
         return ResponseEntity.ok(jobRequestService.markAsCompleted(jobRequestId));
     }
-    @PreAuthorize("hasAnyRole('CLIENT','ADMIN','FREEELANCER')")
+    @PreAuthorize("hasAnyRole('CLIENT','ADMIN','FREELANCER')")
     @GetMapping
     public ResponseEntity<List<JobRequestResponseDTO>> getAllJobRequests() {
         List<JobRequestResponseDTO> response = jobRequestService.getAllJobRequests()
