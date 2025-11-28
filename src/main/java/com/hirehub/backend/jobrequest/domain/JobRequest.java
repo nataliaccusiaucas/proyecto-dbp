@@ -48,19 +48,15 @@ public class JobRequest {
 
     public JobRequest() {}
 
-    public JobRequest(String title,List<String> categories,String description, Double budget, JobStatus status, User client) {
+    public JobRequest(String title, List<String> categories, String description,
+                      Double budget, JobStatus status, User client) {
+
         this.title = title;
-        this.categories=categories;
+        this.categories = categories;
         this.description = description;
         this.budget = budget;
         this.status = status;
         this.client = client;
         this.createdAt = LocalDateTime.now();
-    }
-
-    public void setId(UUID uuid) {
-    }
-
-    public void setCreatedAt(LocalDateTime now) {
     }
 }
