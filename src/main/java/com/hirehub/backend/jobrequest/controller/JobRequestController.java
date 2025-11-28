@@ -62,6 +62,8 @@ public class JobRequestController {
     }
 
     private JobRequestResponseDTO mapToResponse(JobRequest jobRequest) {
+        var client = jobRequest.getClient();
+
         return new JobRequestResponseDTO(
                 jobRequest.getId(),
                 jobRequest.getTitle(),
@@ -69,8 +71,8 @@ public class JobRequestController {
                 jobRequest.getDescription(),
                 jobRequest.getBudget(),
                 jobRequest.getStatus(),
-                jobRequest.getClient().getId(),
-                jobRequest.getClient().getName(),
+                client != null ? client.getId() : null,
+                client != null ? client.getName() : "Cliente no disponible",
                 jobRequest.getCreatedAt()
         );
     }
