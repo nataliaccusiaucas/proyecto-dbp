@@ -46,13 +46,12 @@ public class AuthService {
         user.setEmail(request.email());
         user.setPhone(request.phone());
         user.setPassword(passwordEncoder.encode(request.password()));
-
-        String roleValue = request.role() != null && !request.role().isBlank()
-                ? request.role().toUpperCase()
-                : "CLIENT";
-        user.setRole(Role.valueOf(roleValue));
+        user.setRole(Role.valueOf(
+                (request.role() == null || request.role().isBlank()) ? "CLIENT" : request.role().toUpperCase()
+        ));
 
         userRepository.save(user);
+
         String token = jwtService.generateToken(user);
 
         return new AuthResponseDTO(
@@ -70,41 +69,33 @@ public class AuthService {
         );
     }
 
-
     public AuthResponseDTO login(AuthRequestDTO request) {
+
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.email(), request.password()
-                    )
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
         } catch (BadCredentialsException e) {
-            throw new UnauthorizedException("Credenciales incorrectas.");
+            throw new UnauthorizedException("Credenciales incorrectas. Verifica tu correo o contraseña.");
         }
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuario no encontrado con email: " + request.email()
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado: " + request.email()));
 
         String token = jwtService.generateToken(user);
 
         return new AuthResponseDTO(
-                mapToDTO(user),
+                new UserResponseDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPhone(),
+                        user.getRole(),
+                        user.getCreatedAt(),
+                        user.getAverageRating(),
+                        user.getCompletedJobs()
+                ),
                 token
-        );
-    }
-
-    private UserResponseDTO mapToDTO(User user) {
-        return new UserResponseDTO(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getRole(),
-                user.getCreatedAt(),
-                user.getAverageRating(),
-                user.getCompletedJobs()
         );
     }
 }
