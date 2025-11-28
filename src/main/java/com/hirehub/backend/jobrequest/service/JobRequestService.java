@@ -43,7 +43,7 @@ public class JobRequestService {
 
         JobRequest jobRequest = new JobRequest(
                 dto.title(),
-                dto.category(),
+                dto.categories(),
                 dto.description(),
                 dto.budget(),
                 JobStatus.OPEN,

@@ -65,7 +65,7 @@ public class JobRequestController {
         return new JobRequestResponseDTO(
                 jobRequest.getId(),
                 jobRequest.getTitle(),
-                jobRequest.getCategory(),
+                jobRequest.getCategories(),
                 jobRequest.getDescription(),
                 jobRequest.getBudget(),
                 jobRequest.getStatus(),
